@@ -247,5 +247,24 @@ class unitTests(unittest.TestCase):
                 input, comparison_key=2
             )
 
+    def test_ex34_grades(self):
+        cases = [[rand() + random() for _ in range(4)] for _ in range(10)]
+        for grades in cases:
+            expected = sum(grades) / 4
+            self.run_test('chapter1/ex34.py',
+                expected,
+                '{}\n{}\n{}\n{}'.format(*grades),
+                comparison=self.assertAlmostEqual
+            )
+    def test_ex35_new_salary(self):
+        cases = (rand(600, 12000) for _ in range(10))
+        for salary in cases:
+            expected = salary * 1.213
+            self.run_test('chapter1/ex35.py',
+                expected,
+                salary
+            )
+
+
 if __name__ == '__main__':
     unittest.main()
