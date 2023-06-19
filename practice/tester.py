@@ -13,16 +13,16 @@ def rand(min: int = -sys.maxsize, max: int = sys.maxsize) -> int:
     return randint(min, max)
 
 class unitTests(unittest.TestCase):
-    comparison_mapping = {
-        1: staticmethod(unittest.TestCase.assertEqual),
-        2: staticmethod(unittest.TestCase.assertAlmostEqual)
-    }
 
     def run_test(self, filename, expected, input = None, comparison_key = 1):
+        comparison_mapping = {
+            1: self.assertEqual,
+            2: self.assertAlmostEqual
+        }
         if input:
             input = f'{input}\n'.encode()
 
-        if comparison_key not in self.comparison_mapping:
+        if comparison_key not in comparison_mapping:
             raise ValueError('Invalid comparison key')
 
         process = subprocess.Popen(
@@ -33,7 +33,7 @@ class unitTests(unittest.TestCase):
         decoded_output, _ = process.communicate(input=input)
         decoded_output = decoded_output.decode().strip()
         conversor = type(expected)
-        comparison = self.comparison_mapping[comparison_key]
+        comparison = comparison_mapping[comparison_key]
         comparison(conversor(decoded_output), expected)
 
     def test_ex01_hello_world(self):
@@ -254,8 +254,9 @@ class unitTests(unittest.TestCase):
             self.run_test('chapter1/ex34.py',
                 expected,
                 '{}\n{}\n{}\n{}'.format(*grades),
-                comparison=self.assertAlmostEqual
+                comparison_key=2
             )
+
     def test_ex35_new_salary(self):
         cases = (rand(600, 12000) for _ in range(10))
         for salary in cases:
@@ -265,6 +266,16 @@ class unitTests(unittest.TestCase):
                 salary
             )
 
+    def test_ex36_calc_stair_steps(self):
+        cases = ((float(rand(1, 10)), float(rand(1))) for _ in range(10))
+
+        for (step_height, height) in cases:
+            expected = round(height / step_height)
+            self.run_test('chapter1/ex36.py',
+                expected,
+                '{}\n{}'.format(step_height, height),
+                comparison_key=2
+            )
 
 if __name__ == '__main__':
     unittest.main()
